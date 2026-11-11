@@ -45,3 +45,15 @@ La couverture reprend les éléments graphiques verts du modèle fourni, avec le
 ## Présentation
 
 `Presentation_Projet_03.pptx` contient huit diapositives et des notes orales. Elle reprend le style général de la présentation fournie (ouverture et conclusion bleu nuit, pages claires, accents verts, cartes et numérotation) avec uniquement le contenu du projet énergétique. Les figures sont intégrées directement dans le PowerPoint. Le générateur éditable est `create_presentation.py`.
+
+## Guides individuels et scripts oraux (6 minutes)
+
+Chaque membre dispose d'un guide pour comprendre ses diapositives et d'un PDF d'une page contenant uniquement son texte à dire. La répartition est indicative ; répétez ensemble et ajustez votre débit pour tenir six minutes.
+
+| Membre | Diapositives | Guide | Script oral |
+|---|---:|---|---|
+| Elkihel Elmehdi | 1 à 3 | [Comprendre les données et les graphiques](guides/01_ELKIHEL_Donnees_Exploration.md) | [PDF Elkihel](scripts_oraux/01_ELKIHEL.pdf) |
+| El Assri L'Houcine | 4 et 5 | [Comprendre le protocole et les cinq modèles](guides/02_EL_ASSRI_Protocole_Modeles.md) | [PDF El Assri](scripts_oraux/02_EL_ASSRI.pdf) |
+| Said Charaf | 6 à 8 | [Comprendre les résultats et les erreurs](guides/03_SAID_Resultats_Erreurs_Conclusion.md) | [PDF Said](scripts_oraux/03_SAID.pdf) |
+
+Les PDF sont régénérables avec `python scripts/generate_oral_pdfs.py`.
