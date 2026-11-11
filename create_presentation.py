@@ -6,6 +6,7 @@ from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from PIL import Image
+from scripts.oral_content import SCRIPTS
 
 ROOT=Path(__file__).resolve().parent
 OUT=ROOT/'Presentation_Projet_03.pptx'
@@ -55,9 +56,19 @@ def card(sl,x,y,w,h,title,body,accent=GREEN):
  txt(sl,title,x+.22,y+.2,w-.45,.55,17,INK,True)
  txt(sl,body,x+.22,y+.85,w-.45,h-1,15,MUTED)
 
+ORAL_NOTES = {}
+for _, speaker, _, sections in SCRIPTS:
+ for title, body in sections:
+  number = int(title.split()[1])
+  ORAL_NOTES[number] = (speaker, title, body)
+
 def notes(sl,text):
- try: sl.notes_slide.notes_text_frame.text=text
- except Exception: pass
+ number = len(prs.slides)
+ speaker, title, body = ORAL_NOTES[number]
+ sl.notes_slide.notes_text_frame.text = (
+  f'Intervenant : {speaker}\n{title}\n\n'
+  f'Texte à dire :\n{body}\n\nRepère visuel : {text}'
+ )
 
 # 1 : couverture
 s=prs.slides.add_slide(prs.slide_layouts[6]);s.background.fill.solid();s.background.fill.fore_color.rgb=BG

@@ -44,7 +44,7 @@ La couverture reprend les éléments graphiques verts du modèle fourni, avec le
 
 ## Présentation
 
-`Presentation_Projet_03.pptx` contient huit diapositives et des notes orales. Elle reprend le style général de la présentation fournie (ouverture et conclusion bleu nuit, pages claires, accents verts, cartes et numérotation) avec uniquement le contenu du projet énergétique. Les figures sont intégrées directement dans le PowerPoint. Le générateur éditable est `create_presentation.py`.
+`Presentation_Projet_03.pptx` contient huit diapositives et des notes orales. Elle reprend le style général de la présentation fournie (ouverture et conclusion bleu nuit, pages claires, accents verts, cartes et numérotation) avec uniquement le contenu du projet énergétique. Les figures sont intégrées directement dans le PowerPoint. Le générateur éditable est `create_presentation.py`. Chaque diapositive contient dans ses notes le texte oral complet du membre chargé de la présenter : Elkihel (1 à 3), El Assri (4 et 5), Said (6 à 8). Les textes des notes et des PDF proviennent de `scripts/oral_content.py`. Pour régénérer la présentation après une modification des textes : `python create_presentation.py`.
 
 ## Guides individuels et scripts oraux (6 minutes)
 
