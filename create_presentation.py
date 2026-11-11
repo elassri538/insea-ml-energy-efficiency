@@ -104,15 +104,21 @@ txt(s,'Standardisation et encodage appris dans chaque pli : le jeu de test reste
 notes(s,'Le scaler est ajusté dans chaque pli et jamais sur le test. X6 et X8 sont encodées comme catégories. Une graine fixe rend la séparation reproductible.')
 
 # 5 : modèles
-s=base('Modélisation','Cinq méthodes, de la référence linéaire aux arbres',5)
-models=[('Régression linéaire','Référence sans réglage'),('Ridge','Régularisation : alpha'),('KNN','Voisins, distance, poids'),('Arbre de décision','Profondeur et feuilles'),('Random Forest','Arbres, profondeur et feuilles')]
+s=base('Modélisation','Cinq modèles et leurs hyperparamètres retenus',5)
+models=[
+ ('Régression linéaire','Référence : aucun réglage'),
+ ('Ridge','Alpha = 0,1\nRégularisation des coefficients'),
+ ('KNN','5 voisins ; distance Manhattan\nPoids uniformes'),
+ ('Arbre de décision','Profondeur = 8\nAu moins 2 cas par feuille'),
+ ('Random Forest','200 arbres ; profondeur = 10\nAu moins 1 cas par feuille'),
+]
 for j,(title,body) in enumerate(models):
  x=.8+(j%3)*4.0;y=1.48+(j//3)*2.48
  card(s,x,y,3.72,2.18,title,body)
 rect(s,8.8,3.96,3.72,2.18,PALE,True)
 txt(s,'4 modèles réglés',9.08,4.43,3.17,.5,20,GREEN,True)
-txt(s,'La régression linéaire sert de point de comparaison.',9.08,5.05,3.15,.74,15,MUTED)
-notes(s,'Ridge, KNN, arbre et Random Forest ont une grille de paramètres. Tous les modèles utilisent le même train et le même test.')
+txt(s,'Choix par validation croisée à 5 plis, selon le RMSE.',9.08,5.05,3.15,.74,15,MUTED)
+notes(s,'Expliquer que les hyperparamètres sont des réglages choisis avant le test. Ridge : alpha 0,1. KNN : 5 voisins, distance Manhattan (p=1), poids uniformes. Arbre : profondeur 8, au moins 2 cas par feuille. Random Forest : 200 arbres, profondeur 10, au moins 1 cas par feuille. Les choix utilisent le RMSE moyen des 5 plis de validation.')
 
 # 6 : résultats sous forme de graphiques
 s=base('Résultats','Cinq modèles : comparer RMSE et R² en un regard',6)
