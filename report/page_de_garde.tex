@@ -1,0 +1,55 @@
+% Adaptation au mini-projet 03. Le modèle transmis concernait un autre stage.
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \foreach \i in {0,...,7}{
+    \draw[inseagreen,line width=.7pt]
+      ([xshift={6.4cm+\i*.45cm}]current page.north west)
+      .. controls ([xshift={6cm+\i*.45cm},yshift=-4cm]current page.north west)
+      and ([xshift=1cm,yshift=-5cm]current page.north west)
+      .. ([yshift={-8cm-\i*.45cm}]current page.north west);
+  }
+  \fill[inseagreen!80]
+    ([xshift=-6cm]current page.south east)
+    .. controls ([xshift=-5.8cm,yshift=3cm]current page.south east)
+    and ([xshift=-1cm,yshift=5cm]current page.south east)
+    .. ([yshift=8cm]current page.south east)
+    -- (current page.south east) -- cycle;
+\end{tikzpicture}
+\centering
+\vspace*{.2cm}
+\begin{minipage}[c]{.54\textwidth}
+\raggedright\small\bfseries ROYAUME DU MAROC\\[.12cm]
+HAUT-COMMISSARIAT AU PLAN\\[.12cm]
+INSTITUT NATIONAL DE STATISTIQUE\\
+ET D'ÉCONOMIE APPLIQUÉE
+\end{minipage}\hfill
+\begin{minipage}[c]{.29\textwidth}
+\raggedleft\includegraphics[width=3.2cm]{figures/logos/INSEA_logo.png}
+\end{minipage}
+\vspace{2.6cm}
+
+{\Large\bfseries Rapport de mini-projet de Machine Learning\par}
+\vspace{.25cm}
+{\large Mini-projet 03\par}
+\vspace{1.2cm}
+\begin{tikzpicture}
+\node[draw=subjectborder,fill=subjectbg,rounded corners=4mm,
+  line width=1pt,inner sep=17pt,text width=.78\textwidth,align=center] (box)
+  {\Large\bfseries\color{inseagreen} Prédiction des besoins énergétiques des bâtiments\\[.3cm]
+   \normalsize Comparaison de cinq modèles pour la charge de chauffage};
+\node[anchor=south west,xshift=.8cm,yshift=-3pt,
+  fill=subjectbadge,rounded corners=2mm,inner sep=5pt,text=white]
+  at (box.north west) {\textbf{Sujet}};
+\end{tikzpicture}
+\vspace{1.3cm}
+
+{\bfseries Réalisé par\par}\vspace{.25cm}
+ELKIHEL ELMEHDI\\[.13cm]
+EL ASSRI L'HOUCINE\\[.13cm]
+SAID CHARAF
+
+\vfill
+{\large\bfseries Année universitaire 2026--2027\par}
+\vspace{.2cm}
+\end{titlepage}

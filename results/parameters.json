@@ -1,0 +1,20 @@
+{
+  "Régression linéaire": {},
+  "Ridge": {
+    "model__alpha": 0.1
+  },
+  "KNN": {
+    "model__n_neighbors": 5,
+    "model__p": 1,
+    "model__weights": "uniform"
+  },
+  "Arbre de décision": {
+    "model__max_depth": 8,
+    "model__min_samples_leaf": 2
+  },
+  "Random Forest": {
+    "model__max_depth": 10,
+    "model__min_samples_leaf": 1,
+    "model__n_estimators": 200
+  }
+}

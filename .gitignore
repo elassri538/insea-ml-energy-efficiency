@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+.pytest_cache/
+report/*.aux
+report/*.log
+report/*.out
+.DS_Store
