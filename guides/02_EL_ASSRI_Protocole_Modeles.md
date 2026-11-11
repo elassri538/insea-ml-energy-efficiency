@@ -1,59 +1,97 @@
-# El Assri L’Houcine — le protocole et les cinq modèles
+# L’Houcine — comprendre ta partie depuis zéro
 
-**Tes diapositives : 4 et 5. Durée prévue : 2 min 05.** Ton PDF `scripts_oraux/02_EL_ASSRI.pdf` contient ton texte oral. Ce guide t’aide à comprendre pourquoi les résultats peuvent être considérés comme une comparaison loyale. Aucun calcul n’est à relancer pour apprendre cette partie.
+**Tu présentes les diapositives 4 et 5.** Ton texte oral est dans [ton PDF](../scripts_oraux/02_EL_ASSRI.pdf). Commence par lire les sections 1 à 4 ci-dessous, puis regarde les deux diapositives. Tu n’as aucun code à exécuter pour réviser.
 
-## 1. Apprendre puis vérifier
+## 1. L’idée du projet en une minute
 
-Le jeu contient 768 configurations. On en garde **614 pour l’entraînement** et **154 pour le test**. Les 614 servent à apprendre et à choisir les réglages ; les 154 servent à vérifier le résultat final sur des exemples mis de côté. La séparation est aléatoire, avec `random_state=42`, ce qui permet de la reproduire.
+Imagine un tableau de bâtiments. Pour chaque bâtiment, nous connaissons sa forme, sa surface, sa hauteur, son orientation et ses vitrages. Nous connaissons aussi la **charge de chauffage**, appelée **Y1**. Le but est d’apprendre, à partir des bâtiments connus, à estimer Y1 pour un autre bâtiment.
 
-Pense à un étudiant : il révise sur des exercices, puis passe un examen composé d’autres exercices. Regarder les réponses de l’examen pendant les révisions fausserait l’évaluation. Pour un modèle, ce serait une **fuite de données**.
+Un **modèle de machine learning** est simplement une méthode qui repère des relations dans les exemples connus et les réutilise pour faire une prédiction. Ici, la réponse est un nombre : c’est un problème de **régression**. Les données représentent des bâtiments **simulés**.
 
-## 2. Qu’est-ce que la validation croisée ?
+Exemple inventé pour comprendre :
 
-Dans les 614 observations d’entraînement, on forme **cinq parties** appelées *plis*. Pour un réglage donné, le modèle apprend sur quatre plis et est contrôlé sur le cinquième. On recommence jusqu’à ce que chaque pli ait servi au contrôle. Le résultat moyen aide à choisir les paramètres.
+| Bâtiment | Surface | Hauteur | Charge de chauffage connue |
+|---|---:|---:|---:|
+| A | 500 | 3,5 | 15 |
+| B | 520 | 3,5 | 17 |
+| C | 700 | 7 | 32 |
 
-Le critère retenu est le **RMSE** moyen. C’est une mesure de l’écart entre les charges prédites et réelles : **plus le RMSE est petit, mieux c’est**. Les scores des 154 observations de test ne servent pas au choix des paramètres.
+Si un nouveau bâtiment ressemble à A et B, une méthode pourrait prédire une charge proche de 16. **Ces trois lignes sont un exemple pédagogique ; elles ne sont pas les résultats du projet.** Dans le vrai projet, chaque bâtiment possède huit caractéristiques X1 à X8 et le tableau compte 768 lignes.
 
-Un **hyperparamètre** est un réglage choisi pour construire le modèle, par exemple le nombre de voisins de KNN. `GridSearchCV` essaie les valeurs prévues et choisit celles qui obtiennent le meilleur score moyen sur les cinq plis.
+## 2. Ta diapositive 4 : comment vérifier que le modèle sait prédire ?
 
-## 3. Pourquoi transformer certaines variables ?
+Pense à un contrôle à l’école. Tu révises sur des exercices, puis tu passes un examen avec d’autres exercices. Si tu connais déjà les réponses de l’examen, ta note ne mesure plus ce que tu as appris.
 
-Les entrées numériques n’ont pas toutes la même échelle. La **standardisation** retire la moyenne d’une variable et divise par son écart-type. Elle évite qu’une grande unité numérique domine une méthode sensible aux distances. Nous l’utilisons pour la régression linéaire, Ridge et KNN, à l’intérieur des pipelines.
+Nous appliquons la même règle :
 
-X6, l’orientation, et X8, la répartition des vitrages, sont des **catégories** : les chiffres qui les codent ne représentent pas forcément des distances. Un encodage crée une colonne indicatrice pour chaque catégorie. Les arbres utilisent cet encodage mais n’ont pas besoin du scaler pour les autres variables.
+- **614 bâtiments pour l’entraînement** : les modèles apprennent sur ces exemples. On y choisit aussi leurs réglages.
+- **154 bâtiments pour le test** : on garde ces exemples à part jusqu’à la fin pour voir si les prédictions fonctionnent sur des cas non utilisés pour apprendre.
 
-Un **pipeline** relie transformation et modèle. À chaque pli, la transformation est calculée seulement sur la partie utilisée pour apprendre. Cela protège la comparaison contre une fuite depuis la partie de validation.
+Le nombre `42` dans `random_state=42` fixe le tirage aléatoire. Il permet de retrouver les mêmes deux groupes lors d’une nouvelle exécution. **42 n’est pas un score et n’améliore pas la qualité des prédictions.**
 
-## 4. Les cinq modèles en langage courant
+### Que signifie « validation croisée à cinq plis » ?
 
-| Modèle | Idée simple | Réglage retenu |
+Nous devons comparer plusieurs réglages d’un modèle. Pour cela, nous partageons les **614 bâtiments d’entraînement** en **cinq parties**, appelées *plis*. Le modèle apprend sur quatre parties et nous contrôlons ses prédictions sur la cinquième. Nous répétons cinq fois, en changeant la partie de contrôle. Le score moyen indique quel réglage fonctionne le mieux dans l’entraînement.
+
+Cette validation se déroule **avant** le test final. Elle sert à choisir les réglages ; les 154 bâtiments de test ne participent pas au choix.
+
+### Que mesure le RMSE ?
+
+Si la vraie charge vaut 20 et que le modèle prédit 18, il se trompe de 2. Si la vraie charge vaut 30 et qu’il prédit 34, il se trompe de 4. Le **RMSE** résume les écarts sur tous les bâtiments en donnant davantage de poids aux grosses erreurs. **Plus le RMSE est faible, mieux les prédictions sont proches des valeurs connues.**
+
+La validation croisée choisit les réglages avec le **plus petit RMSE moyen**. Le RMSE du test est calculé ensuite pour évaluer le résultat final.
+
+### Que sont « scaler », « encodage » et « pipeline » ?
+
+Tu peux comprendre la diapositive sans réciter ces mots. Voici leur sens :
+
+- **Standardiser** ou utiliser un *scaler* : mettre des variables numériques sur des échelles comparables. La surface peut être de plusieurs centaines, tandis qu’une proportion de vitrage est entre 0 et 1. Sans précaution, une méthode basée sur les distances peut donner trop de poids à la surface.
+- **Encoder une catégorie** : traduire une étiquette telle que l’orientation en colonnes utilisables par le modèle, sans prétendre qu’une orientation numérotée 4 est « deux fois » une orientation numérotée 2.
+- **Pipeline** : ranger les étapes dans le bon ordre : préparer les données, puis entraîner le modèle. Pendant la validation, la préparation est apprise seulement sur les exemples utilisés pour l’entraînement du pli. Cela évite une **fuite de données**, c’est-à-dire l’utilisation indirecte d’informations venant des exemples à évaluer.
+
+La régression linéaire, Ridge et KNN utilisent la standardisation. Les deux méthodes à base d’arbres n’en ont pas besoin dans ce projet. L’orientation X6 et la répartition des vitrages X8 sont traitées comme des catégories.
+
+## 3. Ta diapositive 5 : comprendre les cinq modèles
+
+Ne cherche pas à apprendre leurs formules. Comprends l’image mentale de chacun :
+
+| Modèle | Image facile à retenir | Ce qu’il fait ici |
 |---|---|---|
-| Régression linéaire | Cherche une combinaison des caractéristiques qui forme une droite ou un plan de prédiction | Référence sans réglage |
-| Ridge | Régression linéaire avec une pénalité qui freine les coefficients trop grands | `alpha=0,1` |
-| KNN | Regarde les configurations les plus proches, puis combine leurs Y1 | 5 voisins, distance Manhattan, poids égaux |
-| Arbre de décision | Pose des questions successives sur les caractéristiques | Profondeur 8, au moins 2 cas par feuille |
-| Random Forest | Combine les prédictions de nombreux arbres différents | 200 arbres, profondeur 10, au moins 1 cas par feuille |
+| **Régression linéaire** | Une règle simple qui combine les mesures | Sert de référence pour comparer les autres |
+| **Ridge** | La même règle, avec un frein sur les coefficients trop grands | Essaie d’éviter une règle trop sensible aux données apprises |
+| **KNN** | « Quels bâtiments connus ressemblent le plus à celui-ci ? » | Regarde les cinq voisins retenus, puis combine leurs charges |
+| **Arbre de décision** | Un jeu de questions « si… alors… » | Suit des questions sur les mesures jusqu’à une prédiction |
+| **Random Forest** | Plusieurs arbres dont les résultats sont combinés | Utilise 200 arbres dans le réglage retenu |
 
-Une **droite** est une image facile à comprendre pour la régression linéaire ; en réalité, le modèle combine plusieurs variables. KNN n’emploie pas cinq variables : il utilise les huit caractéristiques, puis retient cinq **observations voisines**. Random Forest ne signifie pas que les arbres sont choisis n’importe comment : leur construction introduit de l’aléatoire contrôlé afin de diversifier leurs prédictions.
+**Attention à la confusion fréquente :** « KNN utilise cinq voisins » ne veut pas dire « cinq caractéristiques ». Il compare les bâtiments avec les **huit caractéristiques**, puis retient **cinq bâtiments voisins**.
 
-## 5. Que dire sur les diapositives ?
+La régression linéaire sert de point de départ. Pour Ridge, KNN, l’arbre et Random Forest, la validation croisée compare plusieurs réglages possibles. Par exemple, pour KNN, elle compare plusieurs nombres de voisins. Le code conserve les réglages gagnants dans `results/parameters.json`.
 
-**Diapositive 4 :** explique le parcours « séparer → valider → évaluer ». Souligne que le test reste à part jusqu’à la fin. Les chiffres à mémoriser sont **614**, **154** et **5 plis**.
+## 4. Les trois phrases essentielles à savoir dire
 
-**Diapositive 5 :** présente les cinq modèles en partant de la référence linéaire. Ridge, KNN, arbre et Random Forest ont été réglés par validation croisée. Dis une phrase simple pour chacun, puis passe la parole à Said pour les résultats.
+1. « Nous avons utilisé 614 bâtiments pour apprendre et 154 pour vérifier les prédictions à la fin. »
+2. « Sur les 614 bâtiments, la validation croisée à cinq plis sert à choisir les réglages avec l’erreur RMSE la plus faible. »
+3. « Nous comparons cinq modèles : régression linéaire, Ridge, KNN, arbre de décision et Random Forest. »
 
-## 6. Où lire les preuves dans le projet ?
+Si tu comprends ces trois phrases, tu peux déjà expliquer le cœur de tes diapositives. Tu peux ensuite ajouter que la préparation des variables se fait à l’intérieur de la validation pour éviter une fuite de données.
 
-Dans `src/train.py`, `train_test_split` réalise la séparation, `make_preprocessor` prépare les variables, `make_searches` définit les cinq modèles et `GridSearchCV` effectue les recherches. `results/parameters.json` contient les réglages effectivement choisis. Le notebook présente les étapes dans le même ordre.
+## 5. Où regarder dans les fichiers ?
 
-## 7. Questions possibles du jury
+- `Presentation_Projet_03.pptx` : tes diapositives 4 et 5.
+- `scripts_oraux/02_EL_ASSRI.pdf` : le texte à dire, simplifié pour l’oral.
+- `results/parameters.json` : les réglages retenus pour les modèles.
+- `src/train.py` : `train_test_split` coupe les données ; `make_searches` définit les cinq modèles. Tu n’as pas besoin de savoir écrire ces fonctions pour expliquer leur rôle.
 
-**Pourquoi ne pas entraîner sur les 768 cas ?** Parce qu’il faut conserver des exemples non utilisés dans l’apprentissage pour estimer les performances finales.
+## 6. Questions possibles du jury
 
-**Pourquoi 42 ?** C’est une graine aléatoire pour reproduire le découpage. Le nombre 42 n’améliore pas le modèle.
+**Pourquoi ne pas donner les 768 lignes au modèle pour apprendre ?** Il faut garder 154 exemples de côté pour vérifier le résultat final.
 
-**Pourquoi standardiser KNN ?** Il compare des distances entre observations ; des variables ayant de grandes unités pourraient dominer ces distances.
+**Pourquoi cinq plis ?** Pour comparer les réglages sur plusieurs parties de l’entraînement au lieu de dépendre d’une seule petite partie. Cinq est le choix utilisé dans cette expérience.
 
-**Pourquoi les arbres n’ont-ils pas de scaler ?** Ils comparent chaque variable à des seuils et n’utilisent pas une distance globale comme KNN.
+**Pourquoi un petit RMSE est-il bon ?** Parce qu’il signifie que les charges prédites sont, globalement, proches des charges connues.
 
-Entraîne-toi à dessiner sur papier les trois étapes « 614 train → 5 plis → 154 test » et à les expliquer sans lire.
+**Quelle différence entre KNN et Random Forest ?** KNN cherche des bâtiments similaires ; Random Forest combine les prédictions de nombreux arbres de questions.
+
+**Est-ce que vous avez utilisé Y2 ?** Non. Le sujet porte uniquement sur la charge de chauffage Y1 ; Y2 correspond au refroidissement.
+
+**Si tu bloques à l’oral :** reviens au dessin « 614 pour apprendre → cinq plis pour choisir → 154 pour tester ». Il résume ta partie.
