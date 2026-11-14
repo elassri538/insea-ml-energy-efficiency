@@ -1,59 +1,62 @@
-# Mini-projet 03 — Prédiction de la charge de chauffage
+# Efficacité énergétique — prédire la charge de chauffage
 
-Ce projet compare cinq modèles de régression sur le jeu public **Energy Efficiency** de l’UCI. La cible est la charge de chauffage `Y1` ; `Y2` (refroidissement) n’est jamais utilisé comme prédicteur. Les données représentent 768 configurations de bâtiments simulées.
+**Projet Machine Learning · INSEA · Python & scikit-learn · régression supervisée**
 
-## Contenu
+Comparer cinq modèles pour estimer la charge de chauffage d’un bâtiment à partir de huit caractéristiques. Le jeu public **UCI Energy Efficiency** contient **768 configurations simulées** ; la cible est `Y1`. La cible de refroidissement `Y2` est exclue des prédicteurs.
 
-- `data/ENB2012_data.xlsx` : données UCI, avec l’archive téléchargée dans le même dossier.
-- `src/train.py` : chargement, visualisations, séparation 80/20, validation croisée, entraînement et évaluation.
-- `Projet_03_Efficacite_Energetique.ipynb` : notebook exécuté avec explications et résultats.
-- `figures/` : exploration, comparaison, valeurs observées/prédites et résidus.
-- `results/` : métriques, paramètres, prédictions du test et erreurs par sous-groupe.
+**Équipe :** ELKIHEL ELMEHDI · EL ASSRI L’HOUCINE · SAID CHARAF. La partie présentée par L’Houcine porte sur le protocole d’évaluation et les modèles.
 
-## Reproduire
+## Découvrir le projet
 
-Depuis la racine du projet :
+| Pour… | Ouvrir |
+| --- | --- |
+| Lire l’analyse et les résultats sans exécuter de code | [Notebook exécuté](Projet_03_Efficacite_Energetique.ipynb) |
+| Comprendre la méthode | [Code d’entraînement](src/train.py) |
+| Consulter la synthèse | [Rapport PDF](report/rapport.pdf) et [présentation](Presentation_Projet_03.pptx) |
+| Vérifier les chiffres | [Métriques CSV](results/metrics.csv), [paramètres](results/parameters.json), [prédictions test](results/predictions_test.csv) |
+| Approfondir le protocole et les modèles | [Guide de L’Houcine](guides/02_EL_ASSRI_Protocole_Modeles.md) |
+
+## Méthode
+
+- Séparation 80/20 : **614 observations d’entraînement**, **154 de test**.
+- Régression linéaire comme référence ; Ridge, KNN, arbre de décision et Random Forest avec recherche d’hyperparamètres par validation croisée à cinq plis.
+- Prétraitement dans des pipelines : encodage de `X6` et `X8`, standardisation pour les modèles sensibles à l’échelle.
+- Choix des paramètres sur l’entraînement ; évaluation finale sur le test avec MAE, RMSE et R².
+
+## Résultats enregistrés
+
+| Modèle | RMSE moyen en validation croisée | RMSE test | R² test |
+| --- | ---: | ---: | ---: |
+| Random Forest | 0,5353 | 0,5359 | 0,9972 |
+| Arbre de décision | 0,5791 | 0,5311 | 0,9973 |
+| KNN | 1,5586 | 1,6712 | 0,9732 |
+| Ridge | 2,8284 | 2,8735 | 0,9208 |
+| Régression linéaire | 2,8285 | 2,8723 | 0,9209 |
+
+Source : [results/metrics.csv](results/metrics.csv). Random Forest obtient le meilleur RMSE moyen en validation croisée ; l’arbre a un RMSE légèrement inférieur sur ce test. Le test ne sert pas à choisir les hyperparamètres.
+
+![Comparaison des modèles](figures/02_comparaison.png)
+
+## Reproduire l’analyse
 
 ```bash
+git clone https://github.com/elassri538/insea-ml-energy-efficiency.git
+cd insea-ml-energy-efficiency
 python -m venv .venv
-# Sous Windows : .venv\Scripts\activate
-# Sous Linux ou macOS : source .venv/bin/activate
-pip install -r requirements.txt
+# Linux / macOS / WSL :
+source .venv/bin/activate
+# Windows PowerShell : .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 python src/train.py
 python make_notebook.py
 ```
 
-Le notebook est déjà exécuté : son contenu peut être lu sans relancer ces commandes. La régression linéaire sert de référence. Ridge, KNN, arbre de décision et Random Forest font chacun l’objet d’une recherche d’hyperparamètres par validation croisée à cinq plis sur les 614 observations d’entraînement. La configuration est choisie par le RMSE moyen de validation ; les métriques finales sont calculées sur les 154 observations de test.
+Le notebook et les résultats sont déjà disponibles. Les commandes ci-dessus régénèrent les analyses ; elles n’ont pas été relancées pour cette mise à jour de présentation.
 
-Les variables `X6` (orientation) et `X8` (distribution des vitrages) sont traitées comme catégories par encodage indicateur. Les autres variables sont standardisées pour les modèles sensibles à l’échelle, dans des pipelines qui évitent les fuites entre plis.
+## Données et limites
 
-**Source des données :** UCI Machine Learning Repository, *Energy Efficiency*, dataset 242, https://archive.ics.uci.edu/dataset/242/energy+efficiency. Données simulées ; les résultats ne démontrent pas une performance sur des bâtiments réels.
+[UCI Machine Learning Repository — Energy Efficiency](https://archive.ics.uci.edu/dataset/242/energy+efficiency). Il s’agit de simulations : les scores ne prouvent pas une performance équivalente sur des bâtiments réels. Une séparation aléatoire sur ce jeu ne mesure pas non plus la généralisation à toutes les familles de bâtiments.
 
-## Rapport LaTeX
+## Documents et soutenance
 
-`report/rapport.tex` est le document principal ; `report/page_de_garde.tex` contient la couverture adaptée au mini-projet 03. Les images du rapport sont dans `figures/` et le logo INSEA dans `report/figures/logos/`. Le PDF compilé est `report/rapport.pdf` (quatre pages, couverture comprise).
-
-Pour recompiler depuis `report/` :
-
-```bash
-pdflatex -interaction=nonstopmode -halt-on-error rapport.tex
-pdflatex -interaction=nonstopmode -halt-on-error rapport.tex
-```
-
-La couverture reprend les éléments graphiques verts du modèle fourni, avec le titre de ce mini-projet et les trois membres du groupe. Le nom d'encadrant et le logo OCP ont été retirés conformément aux indications du groupe.
-
-## Présentation
-
-`Presentation_Projet_03.pptx` contient huit diapositives et des notes orales. Elle reprend le style général de la présentation fournie (ouverture et conclusion bleu nuit, pages claires, accents verts, cartes et numérotation) avec uniquement le contenu du projet énergétique. Les figures sont intégrées directement dans le PowerPoint. Le générateur éditable est `create_presentation.py`. Chaque diapositive contient dans ses notes le texte oral complet du membre chargé de la présenter : Elkihel (1 à 3), El Assri (4 et 5), Said (6 à 8). Les textes des notes et des PDF proviennent de `scripts/oral_content.py`. Pour régénérer la présentation après une modification des textes : `python create_presentation.py`.
-
-## Guides individuels et scripts oraux (6 minutes)
-
-Chaque membre dispose d'un guide pour comprendre ses diapositives et d'un PDF d'une page contenant uniquement son texte à dire. La répartition est indicative ; répétez ensemble et ajustez votre débit pour tenir six minutes.
-
-| Membre | Diapositives | Guide | Script oral |
-|---|---:|---|---|
-| Elkihel Elmehdi | 1 à 3 | [Comprendre les données et les graphiques](guides/01_ELKIHEL_Donnees_Exploration.md) | [PDF Elkihel](scripts_oraux/01_ELKIHEL.pdf) |
-| El Assri L'Houcine | 4 et 5 | [Comprendre le protocole et les cinq modèles](guides/02_EL_ASSRI_Protocole_Modeles.md) | [PDF El Assri](scripts_oraux/02_EL_ASSRI.pdf) |
-| Said Charaf | 6 à 8 | [Comprendre les résultats et les erreurs](guides/03_SAID_Resultats_Erreurs_Conclusion.md) | [PDF Said](scripts_oraux/03_SAID.pdf) |
-
-Les PDF sont régénérables avec `python scripts/generate_oral_pdfs.py`.
+Les [sources LaTeX](report/rapport.tex), [guides des trois membres](guides/) et [scripts oraux](scripts_oraux/) sont conservés. La présentation comprend huit diapositives avec notes orales. Les détails de régénération des documents restent dans le [guide des livrables](docs/DELIVERABLES.md).
