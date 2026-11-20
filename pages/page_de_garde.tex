@@ -1,0 +1,76 @@
+% ============================================================================
+% Page de garde INSEA / HCP réutilisable
+% À inclure depuis la racine du rapport avec : \input{pages/page_de_garde}
+% Renseigner les commandes \Report... dans le préambule du document principal.
+% ============================================================================
+\providecommand{\ReportType}{Rapport de projet}
+\providecommand{\ReportTitle}{Titre de votre projet}
+\providecommand{\ReportSubtitle}{}
+\providecommand{\ReportAuthors}{Prénom NOM}
+\providecommand{\ReportProgram}{}
+\providecommand{\ReportSupervisor}{}
+\providecommand{\ReportAcademicYear}{20XX--20YY}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \foreach \i in {0,...,7}{
+    \draw[inseagreen,line width=.7pt]
+      ([xshift={6.4cm+\i*.45cm}]current page.north west)
+      .. controls ([xshift={6cm+\i*.45cm},yshift=-4cm]current page.north west)
+      and ([xshift=1cm,yshift=-5cm]current page.north west)
+      .. ([yshift={-8cm-\i*.45cm}]current page.north west);
+  }
+  \fill[inseagreen!75]
+    ([xshift=-6cm]current page.south east)
+    .. controls ([xshift=-5.8cm,yshift=3cm]current page.south east)
+    and ([xshift=-1cm,yshift=5cm]current page.south east)
+    .. ([yshift=8cm]current page.south east)
+    -- (current page.south east) -- cycle;
+\end{tikzpicture}
+\centering
+\vspace*{.15cm}
+\begin{minipage}[c]{.24\textwidth}
+  \includegraphics[width=\linewidth,keepaspectratio]{figures/logos/hcp.jpg}
+\end{minipage}\hfill
+\begin{minipage}[c]{.48\textwidth}
+  \centering\small\bfseries
+  ROYAUME DU MAROC\\[.15cm]
+  HAUT-COMMISSARIAT AU PLAN\\[.15cm]
+  INSTITUT NATIONAL DE STATISTIQUE\\
+  ET D'ÉCONOMIE APPLIQUÉE
+\end{minipage}\hfill
+\begin{minipage}[c]{.18\textwidth}
+  \raggedleft\includegraphics[width=\linewidth,keepaspectratio]{figures/logos/INSEA_logo.png}
+\end{minipage}
+
+\vspace{2.3cm}
+{\Large\bfseries\ReportType\par}
+\vspace{.4cm}
+\if\relax\detokenize\expandafter{\ReportProgram}\relax\else
+  {\normalsize\ReportProgram\par}\vspace{.4cm}
+\fi
+\vspace{1.1cm}
+\begin{tikzpicture}
+  \node[draw=subjectborder,fill=subjectbg,rounded corners=4mm,
+    line width=1pt,inner sep=18pt,text width=.76\textwidth,align=center] (box)
+    {\Large\bfseries\color{inseagreen}\ReportTitle
+     \if\relax\detokenize\expandafter{\ReportSubtitle}\relax\else
+       \\[.25cm]\normalsize\color{black}\ReportSubtitle
+     \fi};
+  \node[anchor=south west,xshift=.8cm,yshift=-3pt,
+    fill=subjectbadge,rounded corners=2mm,inner sep=5pt,text=white]
+    at (box.north west) {\textbf{Sujet}};
+\end{tikzpicture}
+
+\vspace{1.35cm}
+{\bfseries Réalisé par\par}\vspace{.25cm}
+\ReportAuthors\par
+\if\relax\detokenize\expandafter{\ReportSupervisor}\relax\else
+  \vspace{.75cm}{\bfseries Encadré par\par}\vspace{.25cm}\ReportSupervisor\par
+\fi
+
+\vfill
+{\large\bfseries Année universitaire \ReportAcademicYear\par}
+\vspace{.2cm}
+\end{titlepage}
